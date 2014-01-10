@@ -7,9 +7,9 @@ Main file: wave.py
 Input data: uncompressed wave files
 Output: sex of the speaker
 
-####Recordings of people reading simple phrases have been used for accuracy measuring.
+Recordings of people reading simple phrases have been used for accuracy measuring.
 ###Accuracy of the algorithm ~80%
-Adding your own files and running parser.rb is easy. Create a folder with the name 'train' in the local repository and put the files you want to be tested there. To call of the tests simply type ````ruby parser.rb all````.
+Adding your own files and running parser.rb is easy. Create a folder with the name 'train' in the local repository and put the files you want to be tested there. To call the tests simply type ````ruby parser.rb all````.
 
 ##Results
 Tests fired in random sequence.
