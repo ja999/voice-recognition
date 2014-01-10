@@ -35,17 +35,17 @@ def unfiltered_precessing(signal, sensitivity):
 
 print_this('reading file...')
 w, array2 = scipy.io.wavfile.read(str(sys.argv[1]))
-print_this('read!')
+print_this('read!\n')
 
 print_this('sampling frequency:')
-print_this(w)
+print_this(w, '\n')
 
 print_this('splitting channels...')
 if array2[0].size == 1:
   array = array2
 else:
   array = np.array([s[0] for s in array2])
-print_this('splitted!')
+print_this('splitted!\n')
 
 cut = 1
 start = 0
@@ -59,18 +59,13 @@ T = size / w
 print_this('array size:')
 print_this(size)
 print_this('time of the file:')
-print_this(T)
+print_this(T, '\n')
 
 Tend = cut * T
 Tstart = start * T
-print_this('time taken into account:')
-print_this((Tend - Tstart))
 
 n = (Tend - Tstart) * w
 t = linspace(Tstart, Tend, n, endpoint=False)
-
-print_this('time  points for X: ')
-print_this(t)
 
 print_this('cutting parts from signal...')
 
@@ -78,32 +73,33 @@ signal = []
 for i in range(int(start*size), int(cut*size)):
   signal.append(array[i])
 signal = np.concatenate((signal, np.zeros(nearest_two(size) - size)), axis = 0)
-print_this(signal.size)
 scale = signal.size / size
 T *= scale
 Tend *= scale
 Tstart *= scale
 
-print_this('fragmented!')
+print_this('fragmented!\n')
 
 signal1 = fft(signal)
 signal1 = abs(signal1)
-print_this('calculated fft!')
+print_this('calculated fft!\n')
 
-print_this('cutting fft...')
+print_this('cutting fft...\n')
 if signal1.size / 2 == n / 2:
   signal_cut = signal1[:(signal1.size / 2)]
 else:
   signal_cut = signal1[:(signal1.size / 2) - 1]
+print_this('applying high and low frequency filters...')
 if signal_cut.size - (hi_freq_ign * (Tend - Tstart)) + 1 > 0:
   signal_cut = np.concatenate((np.zeros(low_freq_ign * (Tend - Tstart)), signal_cut[(low_freq_ign * (Tend - Tstart)):(hi_freq_ign * (Tend - Tstart))], np.zeros(signal_cut.size - (hi_freq_ign * (Tend - Tstart)) + 1)), axis = 0)
 else:
   signal_cut = np.concatenate((np.zeros(low_freq_ign * (Tend - Tstart)), signal_cut[(low_freq_ign * (Tend - Tstart)):(hi_freq_ign * (Tend - Tstart))], np.zeros(signal_cut.size - ((hi_freq_ign * (Tend - Tstart)) / 2) + 1)), axis = 0)
 max_amp = np.amax(signal_cut)
 max_amp_freq = np.argmax(signal_cut) / (Tend - Tstart)
+print_this('filtered!\n')
 
 print_this('frequency with maximum amplitude:')
-print_this(max_amp_freq)
+print_this(max_amp_freq, '\n')
 
 thresh = max_amp * thresh_factor
 
@@ -111,16 +107,15 @@ signal_filtered = np.array([ind / (Tend - Tstart) for ind, s in enumerate(signal
 signal_unfiltered = np.array([[ind / (Tend - Tstart), s] for ind, s in enumerate(signal_cut) if s > thresh])
 
 print_this('filtered signal aray:')
-print_this(signal_filtered)
+print_this(signal_filtered, '\n')
+print_this('filtered signal aray size:')
 print_this(signal_filtered.size)
 
-print_this('unfiltered signal array:')
-print_this(signal_unfiltered[0])
-print_this(signal_unfiltered[1])
-print_this(signal_unfiltered.size)
+print_this('unfiltered signal array size:')
+print_this(signal_unfiltered.size, '\n')
 
 print_this('first known frequency:')
-print_this(signal_filtered[0])
+print_this(signal_filtered[0], '\n')
 
 if signal_filtered[0] > 160:
   res = 'K'
@@ -131,7 +126,8 @@ else:
     res = 'M'
 
 status = int(res in sys.argv[1]) + 2
-print status, res, sys.argv[1]
+print_this('result\tfile')
+print res, "\t", sys.argv[1]
 if not plotting:
   exit(status)
 
